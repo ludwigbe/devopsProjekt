@@ -1,0 +1,4 @@
+{
+    "DockerRun.DisableDockerrc": true,
+    "java.configuration.updateBuildConfiguration": "interactive"
+} 

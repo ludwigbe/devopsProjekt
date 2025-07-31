@@ -1,0 +1,107 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerUsername: 'rapha16'
+  dockerPassword: '$(dockerPassword)' 
+
+steps:
+
+# Frontend
+- script: |
+    echo "Navigating to the project directory"
+    cd src/main/ui
+    echo "Building Docker image"
+    docker build -t rapha16/frontend:devops-latest .
+  displayName: 'Build Frontend Image'
+
+- script: |
+    echo $(dockerPassword) | 
+    docker login --username rapha16 --password-stdin
+    docker push rapha16/frontend:devops-latest
+  displayName: 'Push Frontend Image'
+
+# CustomerService
+- script: |
+    cd CustomerService
+    docker build -t rapha16/customer-service:devops-latest .
+  displayName: 'Build CustomerService Image'
+
+- script: |
+    docker push rapha16/customer-service:devops-latest
+  displayName: 'Push CustomerService Image'
+
+# ConsultantService
+- script: |
+    cd ConsultantService
+    docker build -t rapha16/consultant-service:devops-latest .
+  displayName: 'Build ConsultantService Image'
+
+- script: |
+    docker push rapha16/consultant-service:devops-latest
+  displayName: 'Push ConsultantService Image'
+
+# EntriesService
+- script: |
+    cd EntrieService
+    docker build -t rapha16/entries-service:devops-latest .
+  displayName: 'Build EntriesService Image'
+
+- script: |
+    docker push rapha16/entries-service:devops-latest
+  displayName: 'Push EntriesService Image'
+
+# ProjectsService
+- script: |
+    cd ProjectsService
+    docker build -t rapha16/project-service:devops-latest .
+  displayName: 'Build ProjectsService Image'
+
+- script: |
+    docker push rapha16/project-service:devops-latest
+  displayName: 'Push ProjectsService Image'
+
+# ConsultantProjectService
+- script: |
+    cd ConsultantsProjectService
+    docker build -t rapha16/consultant-project-service:devops-latest .
+  displayName: 'Build ConsultantProjectService Image'
+
+- script: |
+    docker push rapha16/consultant-project-service:devops-latest
+  displayName: 'Push ConsultantProjectService Image'
+
+# Caddy
+- script: |
+    cd caddy
+    docker build -t rapha16/caddy:devops-latest .
+  displayName: 'Build Caddy Image'
+
+- script: |
+    docker push rapha16/caddy:devops-latest
+  displayName: 'Push Caddy Image'
+
+# SonarQube
+- script: |
+    cd sonarqube
+    docker build -t rapha16/sonarqube:devops-latest .
+  displayName: 'Build SonarQube Image'
+
+- script: |
+    docker push rapha16/sonarqube:devops-latest
+  displayName: 'Push SonarQube Image'
+
+# RabbitMQ
+- script: |
+    cd rabbitmq
+    docker build -t rapha16/rabbitmq:devops-latest .
+  displayName: 'Build RabbitMQ Image'
+
+- script: |
+    docker push rapha16/rabbitmq:devops-latest
+  displayName: 'Push RabbitMQ Image'

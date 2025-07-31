@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  consultant-project-service:
+    image: rapha16/consultant-project-service:devops-latest
+    ports:
+      - "8085:8085"
+    networks:
+      - Devops
+
+  customer-service:
+    image: rapha16/customer-service:devops-latest
+    ports:
+      - "8081:8081"
+    networks:
+      - Devops
+
+  entries-service:
+    image: rapha16/entries-service:devops-latest
+    ports:
+      - "8084:8084"
+    networks:
+      - Devops
+
+  project-service:
+    image: rapha16/project-service:devops-latest
+    ports:
+      - "8082:8082"
+    networks:
+      - Devops
+
+  consultant-service:
+    image: rapha16/consultant-service:devops-latest
+    ports:
+      - "8083:8083"
+    networks:
+      - Devops
+
+  postgres-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - Devops
+
+  caddy:
+    image: rapha16/caddy:devops-latest
+    ports:
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/caddyFile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - consultant-project-service
+      - customer-service
+      - entries-service
+      - project-service
+      - consultant-service
+    networks:
+      - Devops
+
+  sonarqube:
+    image: rapha16/sonarqube:devops-latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - Devops
+    restart: unless-stopped
+
+networks:
+  Devops:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:

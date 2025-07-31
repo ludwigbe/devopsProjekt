@@ -1,0 +1,13 @@
+:443 {
+    reverse_proxy /consultant-project-service* backend:8085
+    reverse_proxy /customer-service* backend:8081
+    reverse_proxy /entries-service* backend:8084
+    reverse_proxy /project-service* backend:8082
+    reverse_proxy /consultant-service* backend:8083
+
+    # Serve static files or custom error pages if needed
+    file_server
+    tls {
+        on_demand
+    }
+} 

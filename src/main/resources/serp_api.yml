@@ -1,0 +1,893 @@
+openapi: 3.0.3
+info:
+  title: Core API Specification for the Services DevOps Project
+  description: |
+    A simple core API specification of customers, 
+    projects and consultants working on the projects.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: Customers
+    description: Customers API
+  - name: Organization
+    description: Internal org structure
+  - name: Projects
+    description: Projects API
+  - name: Time
+    description: Time bookings (entries) for a project and consultant
+paths:
+  /customers:
+    get:
+      tags:
+        - Customers
+      summary: Get all customers
+      operationId: getCustomers
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTOs"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Customers
+      summary: Create a Customer
+      operationId: createCustomer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerDTO"
+        required: true
+      responses:
+        "201":
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /customers/{id}:
+    get:
+      tags:
+        - Customers
+      summary: Get a Customer
+      operationId: getCustomerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the customer to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Customer retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Customers
+      summary: Update a customer
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the customer to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerDTO"
+        required: true
+      responses:
+        "200":
+          description: Customer updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Customers
+      summary: Delete a customer
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the customer to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Customer deleted
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /consultants:
+    get:
+      tags:
+        - Organization
+      summary: Gets all consultants in the organization
+      operationId: getConsultants
+      parameters:
+        - in: query
+          name: shallow
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantDTOs"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Organization
+      summary: Creates a consultant in the organization
+      operationId: createConsultant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsultantDTO"
+        required: true
+      responses:
+        "201":
+          description: Consultant created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /consultants/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Gets a consultant by ID
+      operationId: getConsultant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the consultant to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Consultant retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Organization
+      summary: Update a consultant by ID
+      operationId: updateConsultant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the consultant to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsultantDTO"
+        required: true
+      responses:
+        "200":
+          description: Consultant updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Organization
+      summary: Remove a consultant in the organization by ID
+      operationId: deleteConsultant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the consultant to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Consultant deleted
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users:
+    get:
+      tags:
+        - Organization
+      summary: Gets all users in the organization
+      operationId: getUsers
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTOs"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Organization
+      summary: Creates a user in the organization
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+        required: true
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Gets a user by ID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: User retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Organization
+      summary: Update a user by ID
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDTO"
+        required: true
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Organization
+      summary: Remove a user in the organization by ID
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: User deleted
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: Gets all projects
+      operationId: getProjects
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTOs"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Projects
+      summary: Creates a project
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectDTO"
+        required: true
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /projects/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Gets a project by ID
+      operationId: getProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the project to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Project retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Projects
+      summary: Update a project by ID
+      operationId: updateProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the project to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectDTO"
+        required: true
+      responses:
+        "200":
+          description: Consultant updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Projects
+      summary: Remove a project by ID
+      operationId: deleteProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the project to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Project deleted
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /projects/consultant/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Gets projects for a consultant ID
+      operationId: getProjectsByConsultant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the consultant
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Projects retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTOs"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /projects/customers:
+    get:
+      tags:
+        - Projects
+      summary: Gets all customers
+      operationId: getAllCustomers
+      responses:
+        "200":
+          description: Customers retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectCustomerDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /projects/consultants:
+    get:
+      tags:
+        - Projects
+      summary: Gets all consultants
+      operationId: getAllConsultants
+      responses:
+        "200":
+          description: Consultants retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectConsultantDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /time/entries:
+    get:
+      tags:
+        - Time
+      summary: Gets all entries, time bookings
+      operationId: getAllEntries
+      responses:
+        "200":
+          description: Entries retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntryDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /time/entries/{consultantId}:
+    get:
+      tags:
+        - Time
+      summary: Gets all entries, time bookings for a consultant
+      operationId: getEntriesByConsultantId
+      parameters:
+        - name: consultantId
+          in: path
+          required: true
+          description: The ID of the consultant
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Entries retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntryDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Time
+      summary: post an entry, time bookings for a consultant
+      operationId: createEntry
+      parameters:
+        - name: consultantId
+          in: path
+          required: true
+          description: The ID of the consultant
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryDTO"
+        required: true
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryDTO"
+  /time/entries/{consultantId}/{entryId}:
+    put:
+      tags:
+        - Time
+      summary: update an entry, time bookings for a consultant
+      operationId: updateEntry
+      parameters:
+        - name: consultantId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: entryId
+          in: path
+          required: true
+          description: The ID of the entry
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryDTO"
+        required: true
+      responses:
+        "201":
+          description: time updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryDTO"
+  /time/projects:
+    get:
+      tags:
+        - Time
+      summary: Gets all projects
+      operationId: getAllProjects
+      responses:
+        "200":
+          description: Projects retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntryProjectDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /time/consultants:
+    get:
+      tags:
+        - Time
+      summary: Gets all consultants
+      operationId: getAllEntryConsultants
+      responses:
+        "200":
+          description: Consultants retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EntryConsultantDTO"
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    CustomerDTO:
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        city:
+          type: string
+    CustomerDTOs:
+      type: array
+      items:
+        $ref: "#/components/schemas/CustomerDTO"
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        consultantID:
+          type: integer
+          format: int64
+        externalID:
+          type: string
+    UserDTOs:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserDTO"
+    ConsultantDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        bookedProjects:
+          description: project IDs the consultant is booked on
+          type: array
+          items:
+            $ref: "#/components/schemas/ConsultantProjectDTO"
+    ConsultantProjectDTO:
+      type: object
+      description: project for a consultant - basic information
+      properties:
+        id:
+          type: integer
+          format: int64
+        projectID:
+          type: integer
+          format: int64
+        name:
+          type: string
+    ConsultantDTOs:
+      type: array
+      items:
+        $ref: "#/components/schemas/ConsultantDTO"
+    ProjectDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+        status:
+          type: string
+        customer:
+          $ref: "#/components/schemas/ProjectCustomerDTO"
+        projectStaff:
+          description: consultant IDs booked on this project
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectConsultantDTO"
+    ProjectConsultantDTO:
+      type: object
+      description: consultant on a project, basic information
+      properties:
+        consultantId:
+          type: integer
+          format: int64
+        name:
+          type: string
+    ProjectCustomerDTO:
+      type: object
+      description: customer of a project, basic information
+      properties:
+        customerId:
+          type: integer
+          format: int64
+        name:
+          type: string
+    ProjectDTOs:
+      type: array
+      items:
+        $ref: "#/components/schemas/ProjectDTO"
+    EntryProjectDTO:
+      type: object
+      properties:
+        projectId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        projectStaff:
+          description: consultant IDs booked on this project
+          type: array
+          items:
+            $ref: "#/components/schemas/EntryConsultantDTO"
+    EntryConsultantDTO:
+      type: object
+      properties:
+        consultantId:
+          type: integer
+          format: int64
+        name:
+          type: string
+    EntryDTO:
+      type: object
+      description: time booking entry
+      properties:
+        entryId:
+          type: integer
+          format: int64
+        date:
+          type: string
+          format: date-time
+        hours:
+          type: integer
+        project:
+          $ref: "#/components/schemas/EntryProjectDTO"
+        consultant:
+          $ref: "#/components/schemas/EntryConsultantDTO"
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
